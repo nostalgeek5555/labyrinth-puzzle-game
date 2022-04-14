@@ -1,0 +1,25 @@
+fileFormatVersion: 2
+guid: ea569eb1b04d8fc4c81c38548ff8e554
+timeCreated: 1531984305
+licenseType: Pro
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Datsun
+  fontNames:
+  - Datsun
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: a300b6c3f5a5dc542a4f40876a177b2e, type: 3}
+  - {fileID: 12800000, guid: 3cec4bba32f34654992e7b5f9b917947, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

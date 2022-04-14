@@ -1,0 +1,8 @@
+Library/
+Temp/
+Logs/
+Packages/
+.vsconfig
+Assembly-CSharp.csproj
+Source File new.sln
+UserSettings/EditorUserSettings.asset
