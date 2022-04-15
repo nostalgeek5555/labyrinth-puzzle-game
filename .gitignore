@@ -6,3 +6,6 @@ Packages/
 Assembly-CSharp.csproj
 Source File new.sln
 UserSettings/EditorUserSettings.asset
+obj/
+.vs/
+*.csproj

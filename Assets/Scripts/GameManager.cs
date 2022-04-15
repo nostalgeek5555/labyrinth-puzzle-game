@@ -21,13 +21,20 @@ public class GameManager : MonoBehaviour
     public Transform[] cardEffect;
     public TextMeshProUGUI[] cardEffectNumberText;
     [Space]
-    public UnityEvent onFinish, onPlayerUnlocked, playAnimAudio;
+    public Dadu dadu;
+    public QuestionTimer questionTimer;
+    //public Transform _cardContainer;
+    //public Transform _cardEffect;
+    //public TextMeshProUGUI _cardEffectNumberText;
+
+    public UnityEvent onBeforeFinish, onFinish, onPlayerUnlocked, playAnimAudio;
 
     bool isStarted;
     int playerCount;
     int timer;
     Coroutine countDown;
 
+    public bool isOpenSetting;
     public static int GameTime;
 
     Pion activePion;
@@ -52,6 +59,21 @@ public class GameManager : MonoBehaviour
     public struct PionContainer
     {
         public Pion[] pions;
+    }
+
+    private void OnEnable()
+    {
+        onBeforeFinish.AddListener(StopGame);
+        dadu.onShuffle.AddListener(Pause);
+        dadu.onFinishShuffle.AddListener(Resume);
+    }
+
+    private void OnDisable()
+    {
+        dadu.onShuffle.RemoveAllListeners();
+        dadu.onFinishShuffle.RemoveAllListeners();
+        onBeforeFinish.RemoveAllListeners();
+        onFinish.RemoveAllListeners();
     }
 
     public void StartGame(int playerCount)
@@ -80,6 +102,8 @@ public class GameManager : MonoBehaviour
         if (countDown != null)
             StopCoroutine(countDown);
         SpawnCard();
+
+        Debug.Log($"run countdown method");
         countDown = StartCoroutine(CountDown());
     }
 
@@ -130,8 +154,29 @@ public class GameManager : MonoBehaviour
             timer--;
             UpdateTime();
             yield return new WaitForSecondsRealtime(1);
-            if (!isStarted)
-                isStarted = timer > 0;
+
+            if (timer > 0)
+            {
+                isStarted = true;
+            }
+
+            else
+            {
+                isStarted = false;
+                break;
+            }
+
+            //if (!isStarted)
+            //    isStarted = timer > 0;
+            
+        }
+
+        if (!isStarted)
+        {
+            //yield return new WaitForSeconds(1);
+
+            Debug.Log($"time out = {timer}");
+            ShowWinner();
         }
     }
 
@@ -145,7 +190,9 @@ public class GameManager : MonoBehaviour
                 if (!pions[i].isActive)
                     continue;
                 activePion = pions[i];
+                Debug.Log($"current active pion {activePion.isAi} && player name {activePion.playerName}");
                 yield return StartCoroutine(pions[i].Turn());
+
                 if (activePion.cards.Count == 0 || activePion.onFinishTile) { 
                     isStarted = false;
                     StopCoroutine(countDown);
@@ -154,6 +201,7 @@ public class GameManager : MonoBehaviour
             }
             yield return new WaitForFixedUpdate();
         }
+
         yield return new WaitForSeconds(1);
         if (!isStarted)
             ShowWinner();
@@ -205,6 +253,8 @@ public class GameManager : MonoBehaviour
 
     public void ShowWinner()
     {
+        onBeforeFinish.Invoke();
+
         int indexWinner = 0;
         int leastCard = pions[0].GetCardCount();
         for (int i = 1; i < playerCount; i++)
@@ -624,6 +674,57 @@ public class GameManager : MonoBehaviour
         cardEffect[Map].gameObject.SetActive(false);
     }
 
+    #region Question Effects
+    //public IEnumerator HandleCardEffect1Number(string number, Vector3 pos)
+    //{
+    //    _cardEffect.GetComponent<CanvasGroup>().alpha = 1;
+    //    _cardEffect.position = pos;
+    //    _cardEffect.localScale = Vector3.zero;
+    //    _cardEffectNumberText.text = number.ToString();
+    //    _cardEffect.gameObject.SetActive(true);
+    //    LeanTween.scale(_cardEffect.gameObject, Vector3.one, .2f).setFrom(Vector3.zero).setEaseInQuad();
+    //    LeanTween.moveLocal(_cardEffect.gameObject, Vector3.zero, .2f).setFrom(_cardEffect.localPosition).setEaseInQuad();
+    //    playAnimAudio.Invoke();
+    //    yield return new WaitForSeconds(1.5f);
+    //    LeanTween.scale(_cardEffect.gameObject, Vector3.one * .2f, .2f).setFrom(_cardEffect.localScale).setEaseInQuad();
+    //    LeanTween.moveLocal(_cardEffect.gameObject, Vector3.down * 900f, .2f).setFrom(_cardEffect.localPosition).setEaseInQuad();
+    //    yield return new WaitUntil(() => LeanTween.isTweening(_cardEffect.gameObject) == false);
+    //    _cardEffect.gameObject.SetActive(false);
+    //}
+
+    //public IEnumerator HandleCardEffect2Question(string operatorType, Vector3 pos)
+    //{
+    //    _cardEffect.GetComponent<CanvasGroup>().alpha = 1;
+    //    _cardEffect.position = pos;
+    //    _cardEffect.localScale = Vector3.zero;
+    //    _cardEffectNumberText.text = operatorType;
+    //    _cardEffect.gameObject.SetActive(true);
+    //    LeanTween.scale(_cardEffect.gameObject, Vector3.one, .2f).setFrom(Vector3.zero).setEaseInQuad();
+    //    LeanTween.moveLocal(_cardEffect.gameObject, Vector3.zero, .2f).setFrom(_cardEffect.localPosition).setEaseInQuad();
+    //    playAnimAudio.Invoke();
+    //    yield return new WaitForSeconds(1.5f);
+    //    LeanTween.scale(_cardEffect.gameObject, Vector3.one * 3, .3f).setFrom(_cardEffect.localScale).setEaseInQuad();
+    //    LeanTween.alphaCanvas(_cardEffect.GetComponent<CanvasGroup>(), 0, .3f).setFrom(1).setEaseInQuad();
+    //    yield return new WaitUntil(() => LeanTween.isTweening(_cardEffect.gameObject) == false);
+    //    _cardEffect.gameObject.SetActive(false);
+    //}
+
+    //public IEnumerator HandleCardEffect3Number(string number, Vector3 pos)
+    //{
+    //    _cardEffect.GetComponent<CanvasGroup>().alpha = 1;
+    //    _cardEffect.position = pos;
+    //    _cardEffect.localScale = Vector3.one * .1f;
+    //    _cardEffectNumberText.text = number.ToString();
+    //    _cardEffect.gameObject.SetActive(true);
+    //    LeanTween.scale(_cardEffect.gameObject, Vector3.one * .2f, .5f).setFrom(_cardEffect.localScale).setEaseInQuad();
+    //    LeanTween.moveLocal(_cardEffect.gameObject, Vector3.down * 900f, .2f).setFrom(_cardEffect.localPosition).setEaseInQuad();
+    //    playAnimAudio.Invoke();
+
+    //    yield return new WaitUntil(() => LeanTween.isTweening(_cardEffect.gameObject) == false);
+    //    _cardEffect.gameObject.SetActive(false);
+    //}
+    #endregion
+
     public void Quit()
     {
         Application.Quit();
@@ -632,6 +733,22 @@ public class GameManager : MonoBehaviour
     public void SetTimeScale(float scale)
     {
         Time.timeScale = scale;
+    }
+
+    public void Pause()
+    {
+        isStarted = false;
+        StopCoroutine(countDown);
+        Debug.Log($"pause game {isStarted}");
+    }
+
+    public void Resume()
+    {
+        isStarted = true;
+        if (!CardManager.Instance.isSetQuestion)
+        {
+            countDown = StartCoroutine(CountDown());
+        }
     }
 
     public void StopGame()

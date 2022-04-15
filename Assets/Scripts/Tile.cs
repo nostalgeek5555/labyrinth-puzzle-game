@@ -130,17 +130,20 @@ public class Tile : MonoBehaviour
         if (idAnim == 0)
         {
             yield return StartCoroutine(GameManager.Instance.SetCardEffect1Number(text, transform.position));
+            //yield return StartCoroutine(GameManager.Instance.HandleCardEffect1Number(text, transform.position));
             GameManager.Instance.AddCard(number);
             placedPion.isAnswering = false;
         }
         else if (idAnim == 1)
         {
             yield return StartCoroutine(GameManager.Instance.SetCardEffect2Question(text, transform.position));
+            //yield return StartCoroutine(GameManager.Instance.HandleCardEffect2Question(text, transform.position));
             CardManager.Instance.SetQuestion(id.status, ref placedPion, opType);
         }
         else
         {
             yield return StartCoroutine(GameManager.Instance.SetCardEffect3Number(text, transform.position));
+            //yield return StartCoroutine(GameManager.Instance.HandleCardEffect3Number(text, transform.position));
             GameManager.Instance.AddCard(number);
             placedPion.isAnswering = false;
         }

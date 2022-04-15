@@ -12,7 +12,7 @@ public class Dadu : MonoBehaviour
     public Sprite[] diceSprites;
     public int dice = 1;
     public int shuffleCount = 10;
-    public UnityEngine.Events.UnityEvent onShuffle;
+    public UnityEngine.Events.UnityEvent onShuffle, onFinishShuffle;
 
     public int Map { get; set; }
 
@@ -43,6 +43,8 @@ public class Dadu : MonoBehaviour
             onShuffle.Invoke();
             yield return new WaitForSeconds(.1f);
         }
+
+        onFinishShuffle.Invoke();
         diceImage[Map].sprite = diceSprites[dice - 1];
         yield return new WaitForSeconds(1);
         diceContainer[Map].SetActive(false);

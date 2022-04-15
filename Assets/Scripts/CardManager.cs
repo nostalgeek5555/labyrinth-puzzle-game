@@ -13,14 +13,20 @@ public class CardManager : MonoBehaviour
     public GameObject confirmButton;
     public UnityEngine.UI.Button confirmBtn;
 
+    [Header("Question Properties")]
     public bool isDouble;
     public bool isLeftDouble;
     public bool isRightDouble;
+    public bool isSetQuestion;
+
+    [Header("Question UI")]
+    public QuestionTimer questionTimer;
+
     [Space]
     public NumberField[] numberFields = new NumberField[3];
     public NumberField[] numberFields2 = new NumberField[3];
     public NumberField[] numberFieldsPlayer = new NumberField[3];
-    public UnityEvent OnCorrectAnswer, onWrongAnswer, onSetQuestion;
+    public UnityEvent OnCorrectAnswer, onWrongAnswer, onSetQuestion, onAiAnswer, onAiFinishAnswer;
 
     List<Card> spawnedCards = new List<Card>();
     float resultNumber;
@@ -29,6 +35,7 @@ public class CardManager : MonoBehaviour
     Operator operatorType;
     Pion pion;
 
+    
     public void ClickCard(Card card)
     {
         if (indexNumber < 0)
@@ -539,6 +546,7 @@ public class CardManager : MonoBehaviour
     {
         wrongText.text = pion.playerName + " tidak mendapatkan Kesempatan melempar Dadu satu kali";
         pion.gotPunishment = true;
+        Debug.Log($"got punishment is {pion.gotPunishment} because of wrong answer");
     }
 
     public void ResetPionStatus()
@@ -549,16 +557,21 @@ public class CardManager : MonoBehaviour
 
     public void SetQuestion(Status stat, ref Pion pion,Operator op = Operator.NONE)
     {
+        onSetQuestion.Invoke();
+
         this.pion = pion;
         status = stat;
         operatorType = op;
         indexNumber = -1;
+        isSetQuestion = true;
         isDouble = false;
         isRightDouble = false;
         isLeftDouble = false;
         print("card count " + pion.cards.Count);
         confirmButton.SetActive(false);
         DisableNumberFields(false);
+
+        questionTimer.StartTimer(1f, 20);
 
         for (int i = 0; i < spawnedCards.Count; i++)
         {
@@ -586,7 +599,7 @@ public class CardManager : MonoBehaviour
                 break;
         }
         confirmBtn.enabled = !pion.isAi;
-        onSetQuestion.Invoke();
+        
         if (pion.isAi)
         {
             StartCoroutine(AiAnswer());
@@ -627,6 +640,7 @@ public class CardManager : MonoBehaviour
 
     IEnumerator AiAnswer()
     {
+        
         yield return new WaitForSeconds(.5f);
         int limit = 5;
         switch(GameManager.Instance.difficulty)
@@ -2243,6 +2257,11 @@ public class CardManager : MonoBehaviour
                 break;
         }
     }
+
+    public void OnDoneConfirmAnswer()
+    {
+        isSetQuestion = false;
+    }
     
     public void SelectNumber(int index)
     {
@@ -2259,6 +2278,25 @@ public class CardManager : MonoBehaviour
     private void OnEnable()
     {
         Instance = this;
+
+        onSetQuestion.AddListener(GameManager.Instance.Pause);
+        OnCorrectAnswer.AddListener(GameManager.Instance.Resume);
+        OnCorrectAnswer.AddListener(OnDoneConfirmAnswer);
+        onWrongAnswer.AddListener(GameManager.Instance.Resume);
+        onWrongAnswer.AddListener(OnDoneConfirmAnswer);
+        onAiAnswer.AddListener(GameManager.Instance.Pause);
+        OnCorrectAnswer.AddListener(OnDoneConfirmAnswer);
+        onAiFinishAnswer.AddListener(GameManager.Instance.Resume);
+        onAiFinishAnswer.AddListener(OnDoneConfirmAnswer);
+    }
+
+    private void OnDisable()
+    {
+        onSetQuestion.RemoveAllListeners();
+        OnCorrectAnswer.RemoveAllListeners();
+        onWrongAnswer.RemoveAllListeners();
+        onAiAnswer.RemoveAllListeners();
+        onAiFinishAnswer.RemoveAllListeners();
     }
 }
 
