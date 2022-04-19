@@ -4,14 +4,18 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.Events;
 using System.Linq;
+using UnityEngine.UI;
 
 public class CardManager : MonoBehaviour
 {
     public GameObject cardPrefab;
     public Transform cardContainer;
-    public TextMeshProUGUI operatorSignText, wrongText;
+    public TextMeshProUGUI operatorSignText, wrongText, skipText;
     public GameObject confirmButton;
-    public UnityEngine.UI.Button confirmBtn;
+    public Button confirmBtn;
+    public GameObject skipButton;
+    public Button skipBtn;
+    
 
     [Header("Question Properties")]
     public bool isDouble;
@@ -26,7 +30,7 @@ public class CardManager : MonoBehaviour
     public NumberField[] numberFields = new NumberField[3];
     public NumberField[] numberFields2 = new NumberField[3];
     public NumberField[] numberFieldsPlayer = new NumberField[3];
-    public UnityEvent OnCorrectAnswer, onWrongAnswer, onSetQuestion, onAiAnswer, onAiFinishAnswer;
+    public UnityEvent OnCorrectAnswer, onWrongAnswer, onSkipQuestion, onSetQuestion, onAiAnswer, onAiFinishAnswer;
 
     List<Card> spawnedCards = new List<Card>();
     float resultNumber;
@@ -52,6 +56,7 @@ public class CardManager : MonoBehaviour
                             n.tempCard = null;
                             n.numberText.text = ".";
                             confirmButton.SetActive(false);
+                            skipButton.SetActive(false);
                             card.ActiveCard(false);
                             return;
                         }
@@ -100,6 +105,7 @@ public class CardManager : MonoBehaviour
                 }
 
                 confirmButton.SetActive(filledNumber >= totalActive);
+                skipButton.SetActive(filledNumber >= totalActive);
             }
             else
             {
@@ -113,6 +119,7 @@ public class CardManager : MonoBehaviour
                             n.tempCard = null;
                             n.numberText.text = ".";
                             confirmButton.SetActive(false);
+                            skipButton.SetActive(false);
                             card.ActiveCard(false);
                             return;
                         }
@@ -161,6 +168,7 @@ public class CardManager : MonoBehaviour
                 }
 
                 confirmButton.SetActive(filledNumber >= totalActive);
+                skipButton.SetActive(filledNumber >= totalActive);
             }
         }
         else
@@ -216,6 +224,7 @@ public class CardManager : MonoBehaviour
         }
 
         confirmButton.SetActive(leftField && rightField && answerField);
+        skipButton.SetActive(leftField && rightField && answerField);
     }
 
     public void Confirm()
@@ -481,9 +490,31 @@ public class CardManager : MonoBehaviour
                 }
             }
         }
+
         else
         {
             print("fields are not filled at all");
+            Debug.Log("player skipping turn");
+
+            onSkipQuestion.Invoke();
+        }
+    }
+
+    public void Skip()
+    {
+        if (skipBtn.enabled)
+        {
+            if (questionTimer.duration > 0)
+            {
+                Debug.Log("skip question");
+                onSkipQuestion.Invoke();
+            }
+
+            else
+            {
+                Debug.Log($"skip failed because of time's up {questionTimer.duration}");
+                onWrongAnswer.Invoke();
+            }
         }
     }
 
@@ -549,6 +580,13 @@ public class CardManager : MonoBehaviour
         Debug.Log($"got punishment is {pion.gotPunishment} because of wrong answer");
     }
 
+    public void SkipQuestion()
+    {
+        skipText.text = pion.playerName + " aman, kesempatan melempar dadu berikutnya tidak hilang";
+        pion.gotPunishment = false;
+        Debug.Log($"{pion.gotPunishment} because of skipping question");
+    }
+
     public void ResetPionStatus()
     {
         if (pion != null)
@@ -569,6 +607,7 @@ public class CardManager : MonoBehaviour
         isLeftDouble = false;
         print("card count " + pion.cards.Count);
         confirmButton.SetActive(false);
+        skipButton.SetActive(false);
         DisableNumberFields(false);
 
         questionTimer.StartTimer(1f, 20);
@@ -2262,6 +2301,8 @@ public class CardManager : MonoBehaviour
     {
         isSetQuestion = false;
     }
+
+    
     
     public void SelectNumber(int index)
     {
@@ -2284,6 +2325,8 @@ public class CardManager : MonoBehaviour
         OnCorrectAnswer.AddListener(OnDoneConfirmAnswer);
         onWrongAnswer.AddListener(GameManager.Instance.Resume);
         onWrongAnswer.AddListener(OnDoneConfirmAnswer);
+        onSkipQuestion.AddListener(GameManager.Instance.Resume);
+        onSkipQuestion.AddListener(OnDoneConfirmAnswer);
         onAiAnswer.AddListener(GameManager.Instance.Pause);
         OnCorrectAnswer.AddListener(OnDoneConfirmAnswer);
         onAiFinishAnswer.AddListener(GameManager.Instance.Resume);
@@ -2295,6 +2338,7 @@ public class CardManager : MonoBehaviour
         onSetQuestion.RemoveAllListeners();
         OnCorrectAnswer.RemoveAllListeners();
         onWrongAnswer.RemoveAllListeners();
+        onSkipQuestion.RemoveAllListeners();
         onAiAnswer.RemoveAllListeners();
         onAiFinishAnswer.RemoveAllListeners();
     }
