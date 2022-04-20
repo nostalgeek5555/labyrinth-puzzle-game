@@ -39,6 +39,7 @@ public class GameManager : MonoBehaviour
 
     Pion activePion;
     Pion[] pions;
+
     List<PlayerCard> spawnedCards = new List<PlayerCard>();
     public Difficulty difficulty;
 
@@ -75,6 +76,7 @@ public class GameManager : MonoBehaviour
         onBeforeFinish.RemoveAllListeners();
         onFinish.RemoveAllListeners();
     }
+
 
     public void StartGame(int playerCount)
     {
