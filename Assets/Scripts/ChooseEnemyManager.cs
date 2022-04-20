@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class ChooseEnemyManager : MonoBehaviour
 {
@@ -10,6 +11,35 @@ public class ChooseEnemyManager : MonoBehaviour
     public Pion[] pions2;
     public ButtonChooseEnemy[] buttonChooseEnemies;
     public List<ButtonChooseEnemy> buttonChooseActors;
+
+    private void OnEnable()
+    {
+        if (buttonChooseActors.Count > 0)
+        {
+            for (int i = 0; i < buttonChooseActors.Count; i++)
+            {
+                if (buttonChooseActors[i].nameInputField != null)
+                {
+                    TMP_InputField nameInputField = buttonChooseActors[i].nameInputField;
+
+                    if (nameInputField.text.Length > 0)
+                    {
+                        nameInputField.text = "";
+                    }
+
+                    else
+                    {
+                        continue;
+                    }
+                }
+
+                else
+                {
+                    continue;
+                }
+            }
+        }
+    }
 
     void Update()
     {

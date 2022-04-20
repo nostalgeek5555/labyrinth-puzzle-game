@@ -9,6 +9,9 @@ public class UIManager : MonoBehaviour
     public static UIManager Instance;
     public static event Action<State> OnBeforeStateChange, OnAfterStateChange;
 
+    [Header("Navigation UI")]
+    public GameObject mainMenuUI;
+
     [Header("Question & Result UI")]
     public GameObject resultUI;
     public GameObject questionContainer;
@@ -16,6 +19,8 @@ public class UIManager : MonoBehaviour
     public GameObject wrongAnswerDisplay;
     public GameObject skipQuestionDisplay;
 
+    [Header("Winning Result UI")]
+    public GameObject winningUI;
 
     private void OnEnable()
     {
@@ -29,7 +34,7 @@ public class UIManager : MonoBehaviour
         OnAfterStateChange += OnAfterStateChangeHandle;
     }
 
-    void Start()
+    void Awake()
     {
         if (Instance == null)
         {
@@ -105,6 +110,7 @@ public class UIManager : MonoBehaviour
             case State.SKIP_TURN:
                 break;
             case State.WIN:
+                HandleOnWinning();
                 break;
             case State.LOSE:
                 break;
@@ -137,6 +143,14 @@ public class UIManager : MonoBehaviour
         resultUI.SetActive(true);
         correctAnswerDisplay.SetActive(true);
         wrongAnswerDisplay.SetActive(false);
+    }
+
+    public void HandleOnWinning()
+    {
+        if (winningUI != null && !winningUI.activeInHierarchy)
+        {
+            winningUI.SetActive(true);
+        }
     }
 
 

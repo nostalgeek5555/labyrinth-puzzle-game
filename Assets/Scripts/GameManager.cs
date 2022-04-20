@@ -44,6 +44,8 @@ public class GameManager : MonoBehaviour
     public Difficulty difficulty;
 
     public int Map { get; set; }
+    public Pion _activePion { get => activePion; set => activePion = value; }
+    public Pion[] _pions { get => pions; set => pions = value; }
 
     public void SetDifficulty(int index)
     {
@@ -74,7 +76,6 @@ public class GameManager : MonoBehaviour
         dadu.onShuffle.RemoveAllListeners();
         dadu.onFinishShuffle.RemoveAllListeners();
         onBeforeFinish.RemoveAllListeners();
-        onFinish.RemoveAllListeners();
     }
 
 
@@ -268,9 +269,12 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        resultPionImage[Map].sprite = pions[indexWinner].pionSprite;
-        resultText[Map].text = pions[indexWinner].playerName + " WIN";
-        onFinish.Invoke();
+        WinningUI _winningUI = UIManager.Instance.winningUI.GetComponent<WinningUI>();
+        _winningUI.ShowWinningList();
+
+        //resultPionImage[Map].sprite = pions[indexWinner].pionSprite;
+        //resultText[Map].text = pions[indexWinner].playerName + " WIN";
+        //onFinish.Invoke();
     }
 
     public void MovePion(Tile tile)
@@ -741,7 +745,6 @@ public class GameManager : MonoBehaviour
     {
         isStarted = false;
         StopCoroutine(countDown);
-        Debug.Log($"pause game {isStarted}");
     }
 
     public void Resume()
