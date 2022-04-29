@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Lean.Pool;
 
 public class UIManager : MonoBehaviour
 {
@@ -11,6 +12,10 @@ public class UIManager : MonoBehaviour
 
     [Header("Navigation UI")]
     public GameObject mainMenuUI;
+
+    [Header("Player Info UI")]
+    public Transform infoUIHolder;
+    public GameObject playerInfoTemplate;
 
     [Header("Question & Result UI")]
     public GameObject resultUI;
@@ -32,6 +37,8 @@ public class UIManager : MonoBehaviour
     {
         OnBeforeStateChange -= OnBeforeStateChangeHandle;
         OnAfterStateChange += OnAfterStateChangeHandle;
+
+        DespawnExistingTemplateOnInit();
     }
 
     void Awake()
@@ -54,6 +61,8 @@ public class UIManager : MonoBehaviour
     {
         switch (_state)
         {
+            case State.INIT:
+                break;
             case State.TURN:
                 break;
             case State.CORRECT_ANSWER:
@@ -65,6 +74,10 @@ public class UIManager : MonoBehaviour
             case State.WIN:
                 break;
             case State.LOSE:
+                break;
+            case State.RESTART:
+                break;
+            case State.QUIT:
                 break;
             default:
                 break;
@@ -75,6 +88,8 @@ public class UIManager : MonoBehaviour
     {
         switch (_state)
         {
+            case State.INIT:
+                break;
             case State.TURN:
                 break;
             case State.CORRECT_ANSWER:
@@ -86,6 +101,10 @@ public class UIManager : MonoBehaviour
             case State.WIN:
                 break;
             case State.LOSE:
+                break;
+            case State.RESTART:
+                break;
+            case State.QUIT:
                 break;
             default:
                 break;
@@ -101,6 +120,9 @@ public class UIManager : MonoBehaviour
 
         switch (_state)
         {
+            case State.INIT:
+                HandleOnInit();
+                break;
             case State.TURN:
                 break;
             case State.CORRECT_ANSWER:
@@ -113,6 +135,12 @@ public class UIManager : MonoBehaviour
                 HandleOnWinning();
                 break;
             case State.LOSE:
+                break;
+            case State.RESTART:
+                HandleOnRestart();
+                break;
+            case State.QUIT:
+                HandleOnQuit();
                 break;
             default:
                 break;
@@ -145,6 +173,52 @@ public class UIManager : MonoBehaviour
         wrongAnswerDisplay.SetActive(false);
     }
 
+    public void HandleOnInit()
+    {
+        DespawnExistingTemplateOnInit();
+
+        SpawnInfoUITemplate();
+    }
+
+    public IEnumerator DespawnExistingTemplateOnInit()
+    {
+        if (infoUIHolder.childCount > 0)
+        {
+            for (int i = infoUIHolder.childCount - 1; i >= 0; i--)
+            {
+                LeanPool.Despawn(infoUIHolder.GetChild(i).gameObject);
+            }
+        }
+
+        yield return new WaitUntil(() => infoUIHolder.childCount == 0);
+        Debug.Log("despawn done");
+    }
+
+    public void SpawnInfoUITemplate()
+    {
+        if (GameManager.Instance != null)
+        {
+            if (GameManager.Instance._pions.Length > 0)
+            {
+                for (int i = 0; i < GameManager.Instance._pions.Length; i++)
+                {
+                    Pion pion = GameManager.Instance._pions[i];
+                    if (pion.isAi && pion.gameObject.activeInHierarchy)
+                    {
+                        GameObject playerInfoGO = LeanPool.Spawn(playerInfoTemplate, infoUIHolder);
+                        PlayerInfoTemplate playerInfoTemp = playerInfoGO.GetComponent<PlayerInfoTemplate>();
+                        playerInfoTemp.Init(pion);
+                    }
+
+                    else
+                    {
+                        continue;
+                    }
+                }
+            }
+        }
+    }
+
     public void HandleOnWinning()
     {
         if (winningUI != null && !winningUI.activeInHierarchy)
@@ -153,14 +227,28 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    public void HandleOnRestart()
+    {
+        StartCoroutine(DespawnExistingTemplateOnInit());
+
+        SpawnInfoUITemplate();
+    }
+
+    public void HandleOnQuit()
+    {
+        StartCoroutine(DespawnExistingTemplateOnInit());
+    }
 
     public enum State
     {
-        TURN = 0,
-        CORRECT_ANSWER = 1,
-        WRONG_ANSWER = 2,
-        SKIP_TURN = 3,
-        WIN = 4,
-        LOSE = 5
+        INIT = 0,
+        TURN = 1,
+        CORRECT_ANSWER = 2,
+        WRONG_ANSWER = 3,
+        SKIP_TURN = 4,
+        WIN = 5,
+        LOSE = 6,
+        RESTART = 7,
+        QUIT = 8
     }
 }

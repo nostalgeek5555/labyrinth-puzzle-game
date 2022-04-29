@@ -53,7 +53,7 @@ public class WinningUI : MonoBehaviour
 
         if (GameManager.Instance._pions.Length > 0)
         {
-            List<Pion> pionList = new List<Pion>(GameManager.Instance._pions.TakeWhile(x => x.gameObject.activeSelf).ToList());
+            List<Pion> pionList = new List<Pion>(GameManager.Instance._pions.Where(x => x.gameObject.activeInHierarchy).ToList());
             IEnumerable<Pion> enumerable = pionList.OrderBy(pion => pion.cards.Count);
             pionList = enumerable.ToList();
             Debug.Log($"total pion count {pionList.Count}");

@@ -87,6 +87,7 @@ public class Tile : MonoBehaviour
                 else
                     isAnswering = false;
                 pion.cards.Add((int)id.status);
+                GameManager.Instance.HandleOnPionDoneMoving();
             }
             else
             {
@@ -103,6 +104,7 @@ public class Tile : MonoBehaviour
                         else
                             isAnswering = false;
                         pion.cards.Add(number);
+                        GameManager.Instance.HandleOnPionDoneMoving();
                         break;
                     case Status.OPERATOR:
                         Operator opertorType = CardManager.Instance.GetOperatorType(id.status);

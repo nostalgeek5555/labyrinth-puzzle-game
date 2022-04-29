@@ -1,10 +1,14 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using Random = UnityEngine.Random;
 
 public class Pion : MonoBehaviour
 {
+    public Type type;
+    public int playerId;
     public string playerName;
     public Sprite pionSprite;
     public List<int> cards = new List<int>();
@@ -13,6 +17,8 @@ public class Pion : MonoBehaviour
     public bool isAi;
     public bool isActive;
     public UnityEvent onMove;
+
+    public PlayerInfoTemplate playerInfoTemplate;
 
     [HideInInspector]
     public Tile currentTile;
@@ -25,13 +31,24 @@ public class Pion : MonoBehaviour
     bool isMoving;
     Pion thisPion;
 
+    private void OnEnable()
+    {
+        GameManager.Instance.OnPionDoneMoving += UpdatePlayerInfoUI;  
+    }
+
+    private void OnDisable()
+    {
+        GameManager.Instance.OnPionDoneMoving -= UpdatePlayerInfoUI;
+    }
+
     void Awake()
     {
         thisPion = this;
     }
 
-    public void Setup(List<int> cards, string playerName)
+    public void Setup(List<int> cards, string playerName, int playerID)
     {
+        playerId = playerID;
         currentTile = startTile;
         isMoving = false;
         gotPunishment = false;
@@ -40,6 +57,16 @@ public class Pion : MonoBehaviour
         transform.position = startTile.transform.position;
         this.playerName = playerName;
         this.cards = cards;
+
+        if (isAi)
+        {
+            type = Type.AI;
+        }
+
+        else
+        {
+            type = Type.PLAYER;
+        }
     }
 
     public IEnumerator Turn()
@@ -153,5 +180,25 @@ public class Pion : MonoBehaviour
             cardCount += cards[i];
         }
         return cardCount;
+    }
+
+    public void UpdatePlayerInfoUI()
+    {
+        if (GameManager.Instance.activePion != null)
+        {
+            if (GameManager.Instance.activePion.playerId == playerId)
+            {
+                if (playerInfoTemplate != null)
+                {
+                    playerInfoTemplate.UpdateInfo();
+                }
+            }
+        }
+    }
+
+    public enum Type
+    {
+        PLAYER = 0,
+        AI = 1
     }
 }

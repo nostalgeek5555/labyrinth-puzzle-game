@@ -1,10 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using TMPro;
 using UnityEngine.UI;
 using System.Linq;
+using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
 {
@@ -27,6 +29,7 @@ public class GameManager : MonoBehaviour
     //public Transform _cardEffect;
     //public TextMeshProUGUI _cardEffectNumberText;
 
+    public event Action OnPionDoneMoving;
     public UnityEvent onBeforeFinish, onFinish, onPlayerUnlocked, playAnimAudio;
 
     bool isStarted;
@@ -37,7 +40,7 @@ public class GameManager : MonoBehaviour
     public bool isOpenSetting;
     public static int GameTime;
 
-    Pion activePion;
+    public Pion activePion;
     Pion[] pions;
 
     List<PlayerCard> spawnedCards = new List<PlayerCard>();
@@ -92,13 +95,15 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < playerCount; i++)
         {
             List<int> cards = new List<int>() { 1, 2, 3, 4, 5, 6 };
-            pions[i].Setup(cards, "Player " + (i + 1).ToString());
+            pions[i].Setup(cards, "Player " + (i + 1).ToString(), i);
             pions[i].gameObject.SetActive(pions[i].isActive);
         }
     }
 
     public void PlayGame()
     {
+        UIManager.Instance.StateController(UIManager.State.INIT);
+
         isStarted = true;
         StopAllCoroutines();
         StartCoroutine(PlayingGame());
@@ -761,6 +766,24 @@ public class GameManager : MonoBehaviour
         if (countDown != null)
             StopCoroutine(countDown);
         StopAllCoroutines();
+    }
+
+    public void QuitGame()
+    {
+        UIManager.Instance.StateController(UIManager.State.QUIT);
+    }
+
+    public void OnRestartGame()
+    {
+        UIManager.Instance.StateController(UIManager.State.RESTART);
+    }
+
+    public void HandleOnPionDoneMoving()
+    {
+        if (OnPionDoneMoving != null)
+        {
+            OnPionDoneMoving();
+        }
     }
 
     static GameManager instance;
