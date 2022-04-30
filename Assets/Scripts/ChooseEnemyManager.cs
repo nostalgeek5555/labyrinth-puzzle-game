@@ -11,6 +11,7 @@ public class ChooseEnemyManager : MonoBehaviour
     public Pion[] pions2;
     public ButtonChooseEnemy[] buttonChooseEnemies;
     public List<ButtonChooseEnemy> buttonChooseActors;
+    
 
     private void OnEnable()
     {
@@ -41,33 +42,48 @@ public class ChooseEnemyManager : MonoBehaviour
         }
     }
 
-    void Update()
+    private void Start()
     {
-        int aiCount = 0;
-        //for (int i = 0; i < buttonChooseEnemies.Length; i++)
-        //{
-        //    if (buttonChooseEnemies[i].currentIndex == 1)
-        //    {
-        //        aiCount++;
-        //    }
-        //    pions1[i].isActive = buttonChooseEnemies[i].currentIndex == 1;
-        //    pions2[i].isActive = pions1[i].isActive;
-        //}
 
         if (buttonChooseActors.Count > 0)
         {
             for (int i = 0; i < buttonChooseActors.Count; i++)
             {
-                if (buttonChooseActors[i].currentIndex == 1)
+                ButtonChooseEnemy buttonChooseActor = buttonChooseActors[i];
+                buttonChooseActor.type = (Pion.Type)buttonChooseActor.currentIndex;
+                Debug.Log($"current picked actor type {buttonChooseActor.type}");
+            }
+        }
+    }
+
+    void Update()
+    {
+        int aiCount = 0;
+        int playerCount = 0;
+
+        if (buttonChooseActors.Count > 0)
+        {
+            for (int i = 0; i < buttonChooseActors.Count; i++)
+            {
+                if (buttonChooseActors[i].type == Pion.Type.AI)
                 {
                     aiCount++;
                 }
-                pions1[i].isActive = buttonChooseActors[i].currentIndex == 1;
+
+                else if (buttonChooseActors[i].type == Pion.Type.PLAYER)
+                {
+                    playerCount++;
+                }
+
+                pions1[i].isActive = buttonChooseActors[i].currentIndex == 1 || buttonChooseActors[i].currentIndex == 2;
                 pions2[i].isActive = pions1[i].isActive;
+                pions1[i].isAi = buttonChooseActors[i].currentIndex == 2;
+                pions2[i].isAi = pions1[i].isAi;
             }
         }
 
-        nextButton.interactable = buttonChooseActors[0].currentIndex == 1 &&  aiCount > 0;
+        nextButton.interactable = playerCount > 1 || playerCount > 0 && aiCount > 0;
+        //nextButton.interactable = buttonChooseActors[0].currentIndex == 1 &&  aiCount > 0;
     }
 
     public void SetPlayerName()

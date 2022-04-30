@@ -198,7 +198,8 @@ public class Pion : MonoBehaviour
 
     public enum Type
     {
-        PLAYER = 0,
-        AI = 1
+        NONE = 0,
+        PLAYER = 1,
+        AI = 2
     }
 }
