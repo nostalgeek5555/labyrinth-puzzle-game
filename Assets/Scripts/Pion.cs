@@ -33,7 +33,7 @@ public class Pion : MonoBehaviour
 
     private void OnEnable()
     {
-        GameManager.Instance.OnPionDoneMoving += UpdatePlayerInfoUI;  
+        GameManager.Instance.OnPionDoneMoving += UpdatePlayerInfoUI;
     }
 
     private void OnDisable()
@@ -73,8 +73,15 @@ public class Pion : MonoBehaviour
     {
         if(gotPunishment)
         {
+            UIManager.Instance.playerCardsInfo.gameObject.SetActive(false);
+
             gotPunishment = false;
             yield break;
+        }
+
+        else
+        {
+            UIManager.Instance.UpdatePlayerCardInfoUI(type, playerName, playerId);
         }
 
         isMoving = true;
@@ -184,6 +191,7 @@ public class Pion : MonoBehaviour
 
     public void UpdatePlayerInfoUI()
     {
+        Debug.Log("update player info ui");
         if (GameManager.Instance.activePion != null)
         {
             if (GameManager.Instance.activePion.playerId == playerId)
@@ -192,6 +200,16 @@ public class Pion : MonoBehaviour
                 {
                     playerInfoTemplate.UpdateInfo();
                 }
+
+                //if (type == Type.PLAYER)
+                //{
+                //    UIManager.Instance.UpdatePlayerCardInfoUI(type, playerName, playerId);
+                //}
+
+                //else
+                //{
+                //    UIManager.Instance.playerCardsInfo.gameObject.SetActive(false);
+                //}
             }
         }
     }

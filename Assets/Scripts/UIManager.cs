@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Lean.Pool;
+using TMPro;
 
 public class UIManager : MonoBehaviour
 {
@@ -15,7 +16,9 @@ public class UIManager : MonoBehaviour
 
     [Header("Player Info UI")]
     public Transform infoUIHolder;
+    public Transform playerCardsInfo;
     public GameObject playerInfoTemplate;
+    public TextMeshProUGUI playerCardsTMP;
 
     [Header("Question & Result UI")]
     public GameObject resultUI;
@@ -203,7 +206,7 @@ public class UIManager : MonoBehaviour
                 for (int i = 0; i < GameManager.Instance._pions.Length; i++)
                 {
                     Pion pion = GameManager.Instance._pions[i];
-                    if (pion.isAi && pion.gameObject.activeInHierarchy)
+                    if (/*pion.isAi &&*/ pion.gameObject.activeInHierarchy)
                     {
                         GameObject playerInfoGO = LeanPool.Spawn(playerInfoTemplate, infoUIHolder);
                         PlayerInfoTemplate playerInfoTemp = playerInfoGO.GetComponent<PlayerInfoTemplate>();
@@ -229,6 +232,8 @@ public class UIManager : MonoBehaviour
 
     public void HandleOnRestart()
     {
+        playerCardsInfo.gameObject.SetActive(false);
+
         StartCoroutine(DespawnExistingTemplateOnInit());
 
         SpawnInfoUITemplate();
@@ -236,7 +241,24 @@ public class UIManager : MonoBehaviour
 
     public void HandleOnQuit()
     {
+        playerCardsInfo.gameObject.SetActive(false);
+
         StartCoroutine(DespawnExistingTemplateOnInit());
+    }
+
+    public void UpdatePlayerCardInfoUI(Pion.Type type, string name, int id)
+    {
+        playerCardsInfo.gameObject.SetActive(true);
+
+        if (name != "")
+        {
+            playerCardsTMP.text = name + " Cards";
+        }
+
+        else
+        {
+            playerCardsTMP.text = type.ToString() + " " + id.ToString() + " Cards";
+        }
     }
 
     public enum State

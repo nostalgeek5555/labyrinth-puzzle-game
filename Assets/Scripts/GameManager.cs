@@ -102,8 +102,6 @@ public class GameManager : MonoBehaviour
 
     public void PlayGame()
     {
-        UIManager.Instance.StateController(UIManager.State.INIT);
-
         isStarted = true;
         StopAllCoroutines();
         StartCoroutine(PlayingGame());
@@ -113,6 +111,8 @@ public class GameManager : MonoBehaviour
 
         Debug.Log($"run countdown method");
         countDown = StartCoroutine(CountDown());
+
+        //UIManager.Instance.StateController(UIManager.State.INIT);
     }
 
     void SpawnCard()

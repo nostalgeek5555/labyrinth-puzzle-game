@@ -9,6 +9,7 @@ public class ButtonChooseEnemy : MonoBehaviour
     public Pion.Type type;
     public int startIndex;
     public int currentIndex;
+    public int nameCharacterLimit;
     public TextMeshProUGUI infoText;
     public TMP_InputField nameInputField;
     public Button nextButton;
@@ -16,6 +17,11 @@ public class ButtonChooseEnemy : MonoBehaviour
 
     public string[] names = new string[] { "PLAYER","AI", "NONE" };
 
+    private void Start()
+    {
+        nameCharacterLimit = 7;
+        nameInputField.characterLimit = nameCharacterLimit;
+    }
 
     void OnEnable()
     {

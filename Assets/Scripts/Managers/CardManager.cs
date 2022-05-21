@@ -623,6 +623,7 @@ public class CardManager : MonoBehaviour
     public void SetQuestion(Status stat, ref Pion pion,Operator op = Operator.NONE)
     {
         onSetQuestion.Invoke();
+        UIManager.Instance.playerCardsInfo.gameObject.SetActive(false);
 
         this.pion = pion;
         status = stat;

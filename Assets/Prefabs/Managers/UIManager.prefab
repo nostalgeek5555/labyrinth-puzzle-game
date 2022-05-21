@@ -46,8 +46,10 @@ MonoBehaviour:
   state: 0
   mainMenuUI: {fileID: 0}
   infoUIHolder: {fileID: 0}
+  playerCardsInfo: {fileID: 0}
   playerInfoTemplate: {fileID: 4213138406025729969, guid: 9646854bf8683f84db587d4f54513476,
     type: 3}
+  playerCardsTMP: {fileID: 0}
   resultUI: {fileID: 0}
   questionContainer: {fileID: 0}
   correctAnswerDisplay: {fileID: 0}

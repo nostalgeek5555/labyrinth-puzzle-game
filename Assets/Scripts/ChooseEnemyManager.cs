@@ -40,11 +40,24 @@ public class ChooseEnemyManager : MonoBehaviour
                 }
             }
         }
+
+        nextButton.onClick.RemoveAllListeners();
+        nextButton.onClick.AddListener(() =>
+        {
+            if (nextButton.interactable)
+            {
+                StartCoroutine(SetPlayerName());
+            }
+        });
+    }
+
+    private void OnDisable()
+    {
+        nextButton.onClick.RemoveAllListeners();
     }
 
     private void Start()
     {
-
         if (buttonChooseActors.Count > 0)
         {
             for (int i = 0; i < buttonChooseActors.Count; i++)
@@ -86,8 +99,10 @@ public class ChooseEnemyManager : MonoBehaviour
         //nextButton.interactable = buttonChooseActors[0].currentIndex == 1 &&  aiCount > 0;
     }
 
-    public void SetPlayerName()
+    public IEnumerator SetPlayerName()
     {
+        int totalPlayer = 0;
+
         if (buttonChooseActors.Count > 0)
         {
             for (int i = 0; i < buttonChooseActors.Count; i++)
@@ -99,21 +114,44 @@ public class ChooseEnemyManager : MonoBehaviour
                         if (!pions1[i].isAi)
                         {
                             pions1[i].playerName = buttonChooseActors[i].nameInputField.text;
+                            Debug.Log($"set current player name {pions1[i].playerName}");
+                            GameManager.Instance._pions[i].playerName = buttonChooseActors[i].nameInputField.text;
+                            Debug.Log($"current pion name {GameManager.Instance._pions[i].playerName}");
                         }
 
                         if (!pions2[i].isAi)
                         {
                             pions2[i].playerName = buttonChooseActors[i].nameInputField.text;
+                            Debug.Log($"set current player name {pions2[i].playerName}");
+                            GameManager.Instance._pions[i].playerName = buttonChooseActors[i].nameInputField.text;
+                            Debug.Log($"current pion name {GameManager.Instance._pions[i].playerName}");
                         }
                     }
 
                     else
                     {
-                        pions1[i].playerName = pions1[i].playerName;
-                        pions2[i].playerName = pions2[i].playerName;
+                        int id = i + 1;
+                        if (pions1[i].type == Pion.Type.PLAYER)
+                        {
+                            pions1[i].playerName = "Player " + id;
+                            pions2[i].playerName = pions1[i].playerName;
+                        }
+
+                        else
+                        {
+                            pions1[i].playerName = "AI " + id;
+                            pions2[i].playerName = pions1[i].playerName;
+                        }
                     }
                 }
+
+                totalPlayer++;
             }
         }
+
+        yield return new WaitUntil(() => totalPlayer == buttonChooseActors.Count);
+
+        UIManager.Instance.StateController(UIManager.State.INIT);
+        gameObject.SetActive(false);
     }
 }
