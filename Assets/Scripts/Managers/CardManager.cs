@@ -59,7 +59,7 @@ public class CardManager : MonoBehaviour
                             n.tempCard = null;
                             n.numberText.text = ".";
                             confirmButton.SetActive(false);
-                            skipButton.SetActive(false);
+                            //skipButton.SetActive(false);
                             card.ActiveCard(false);
                             return;
                         }
@@ -108,7 +108,7 @@ public class CardManager : MonoBehaviour
                 }
 
                 confirmButton.SetActive(filledNumber >= totalActive);
-                skipButton.SetActive(filledNumber >= totalActive);
+                //skipButton.SetActive(filledNumber >= totalActive);
             }
             else
             {
@@ -122,7 +122,7 @@ public class CardManager : MonoBehaviour
                             n.tempCard = null;
                             n.numberText.text = ".";
                             confirmButton.SetActive(false);
-                            skipButton.SetActive(false);
+                            //skipButton.SetActive(false);
                             card.ActiveCard(false);
                             return;
                         }
@@ -171,7 +171,7 @@ public class CardManager : MonoBehaviour
                 }
 
                 confirmButton.SetActive(filledNumber >= totalActive);
-                skipButton.SetActive(filledNumber >= totalActive);
+                //skipButton.SetActive(filledNumber >= totalActive);
             }
         }
         else
@@ -227,7 +227,7 @@ public class CardManager : MonoBehaviour
         }
 
         confirmButton.SetActive(leftField && rightField && answerField);
-        skipButton.SetActive(leftField && rightField && answerField);
+        //skipButton.SetActive(leftField && rightField && answerField);
     }
 
     public void Confirm()
@@ -635,7 +635,7 @@ public class CardManager : MonoBehaviour
         isLeftDouble = false;
         print("card count " + pion.cards.Count);
         confirmButton.SetActive(false);
-        skipButton.SetActive(false);
+        skipButton.SetActive(true);
         DisableNumberFields(false);
 
         questionTimer.StartTimer(1f, 20);
@@ -1633,6 +1633,7 @@ public class CardManager : MonoBehaviour
     {
         if(pion.cards.Count==1)
         {
+            Debug.Log($"generate question for total cards count 2 == {pion.cards.Count}");
             switch(operatorType)
             {
                 case Operator.PENJUMLAHAN:
@@ -1667,6 +1668,7 @@ public class CardManager : MonoBehaviour
         }
         else
         {
+            Debug.Log($"generate question for total cards count == {pion.cards.Count}"); 
             switch (operatorType)
             {
                 case Operator.PENJUMLAHAN:
@@ -1776,6 +1778,7 @@ public class CardManager : MonoBehaviour
 
     void GenerateQuestion(List<int> cards)
     {
+        Debug.Log("generate question");
         foreach (NumberField n in numberFields)
         {
             n.numberText.gameObject.SetActive(true);

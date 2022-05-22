@@ -26,7 +26,7 @@ public class PlayerInfoTemplate : MonoBehaviour
     {
         if (_type == Pion.Type.AI)
         {
-            playerCardInfoText.text = _type.ToString() + " " + _playerId.ToString() + " = " + _playerCardCount + " / " + pion.GetCardCount();
+            playerCardInfoText.text = _type.ToString() + " " + _playerId.ToString() + " = " + pion.GetCardCount();
             Debug.Log(playerCardInfoText.text);
         }
         
@@ -35,13 +35,13 @@ public class PlayerInfoTemplate : MonoBehaviour
             Debug.Log($"player name = {_playerName}");
             if (_playerName != "")
             {
-                playerCardInfoText.text = _playerName + " = " + _playerCardCount + " / " + pion.GetCardCount();
+                playerCardInfoText.text = _playerName + " = " + pion.GetCardCount();
                 Debug.Log(playerCardInfoText.text);
             }
             
             else
             {
-                playerCardInfoText.text = _type.ToString() + " " + _playerId.ToString() + " = " + _playerCardCount + " / " + pion.GetCardCount();
+                playerCardInfoText.text = _type.ToString() + " " + _playerId.ToString() + " = " + pion.GetCardCount();
                 Debug.Log(playerCardInfoText.text);
             }
         }

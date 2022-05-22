@@ -108,5 +108,6 @@ public class WinningUI : MonoBehaviour
         int currentActiveMap = GameManager.Instance.Map;
         GameManager.Instance.maps[currentActiveMap].SetActive(false);
         UIManager.Instance.mainMenuUI.SetActive(true);
+        UIManager.Instance.StateController(UIManager.State.QUIT);
     }
 }
