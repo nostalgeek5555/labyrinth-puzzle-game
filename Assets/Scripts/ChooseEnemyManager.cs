@@ -114,17 +114,13 @@ public class ChooseEnemyManager : MonoBehaviour
                         if (!pions1[i].isAi)
                         {
                             pions1[i].playerName = buttonChooseActors[i].nameInputField.text;
-                            Debug.Log($"set current player name {pions1[i].playerName}");
                             GameManager.Instance._pions[i].playerName = buttonChooseActors[i].nameInputField.text;
-                            Debug.Log($"current pion name {GameManager.Instance._pions[i].playerName}");
                         }
 
                         if (!pions2[i].isAi)
                         {
                             pions2[i].playerName = buttonChooseActors[i].nameInputField.text;
-                            Debug.Log($"set current player name {pions2[i].playerName}");
                             GameManager.Instance._pions[i].playerName = buttonChooseActors[i].nameInputField.text;
-                            Debug.Log($"current pion name {GameManager.Instance._pions[i].playerName}");
                         }
                     }
 

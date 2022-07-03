@@ -6,6 +6,7 @@ using UnityEngine.Events;
 using TMPro;
 using UnityEngine.UI;
 using System.Linq;
+using Lean.Pool;
 using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
@@ -32,10 +33,12 @@ public class GameManager : MonoBehaviour
     public event Action OnPionDoneMoving;
     public UnityEvent onBeforeFinish, onFinish, onPlayerUnlocked, playAnimAudio;
 
-    bool isStarted;
-    int playerCount;
+    public bool isStarted;
+    public int playerCount;
     int timer;
+    Coroutine playGame;
     Coroutine countDown;
+    Coroutine shuffleDiceCoroutine;
 
     public bool isOpenSetting;
     public static int GameTime;
@@ -107,7 +110,6 @@ public class GameManager : MonoBehaviour
         StartCoroutine(PlayingGame());
         if (countDown != null)
             StopCoroutine(countDown);
-        SpawnCard();
 
         Debug.Log($"run countdown method");
         countDown = StartCoroutine(CountDown());
@@ -115,8 +117,9 @@ public class GameManager : MonoBehaviour
         //UIManager.Instance.StateController(UIManager.State.INIT);
     }
 
-    void SpawnCard()
+    public void SpawnCard(int playerId)
     {
+        Debug.Log("spawn player cards");
         for (int i = 0; i < spawnedCards.Count; i++)
         {
             if (spawnedCards[i] != null)
@@ -125,9 +128,20 @@ public class GameManager : MonoBehaviour
             }
         }
         spawnedCards.Clear();
-        for (int i = 0; i < pions[0].cards.Count; i++)
+        for (int i = 0; i < pions[playerId].cards.Count; i++)
         {
-            AddCard(pions[0].cards[i]);
+            AddCard(pions[playerId].cards[i]);
+        }
+    }
+
+    public void ClearCards()
+    {
+        if (cardContainer[Map].childCount > 0)
+        {
+            for (int i = cardContainer[Map].childCount - 1; i >= 0; i--)
+            {
+                Destroy(cardContainer[Map].GetChild(i).gameObject);
+            }
         }
     }
 
@@ -190,9 +204,13 @@ public class GameManager : MonoBehaviour
 
     IEnumerator PlayingGame()
     {
+        Debug.Log("start playing game");
+        Debug.Log($"is started {isStarted}");
+
         yield return new WaitForSeconds(1);
         while (isStarted)
         {
+            Debug.Log("started");
             for (int i = 0; i < playerCount; i++)
             {
                 if (!pions[i].isActive)
@@ -763,6 +781,13 @@ public class GameManager : MonoBehaviour
 
     public void StopGame()
     {
+        if (cardContainer[Map].childCount > 0)
+        {
+            for (int i = cardContainer[Map].childCount - 1; i >= 0; i--)
+            {
+                LeanPool.Despawn(cardContainer[Map].GetChild(i).gameObject);
+            }
+        }
         if (countDown != null)
             StopCoroutine(countDown);
         StopAllCoroutines();
@@ -775,6 +800,11 @@ public class GameManager : MonoBehaviour
 
     public void OnRestartGame()
     {
+        Dadu.instance.buttonLempar[Map].SetActive(false);
+        for (int i = 0; i < playerCount; i++)
+        {
+            StopCoroutine(pions[i].Turn());
+        }
         UIManager.Instance.StateController(UIManager.State.RESTART);
     }
 

@@ -23,6 +23,8 @@ public class Dadu : MonoBehaviour
 
     public IEnumerator Shuffle( bool activateButton = false)
     {
+        Debug.Log($"activate dice button status {activateButton}");
+        Debug.Log($"dice active status {gameObject.activeInHierarchy}");
         yield return new WaitForSeconds(.5f);
         diceContainer[Map].SetActive(true);
         buttonLempar[Map].SetActive(activateButton);

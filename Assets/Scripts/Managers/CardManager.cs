@@ -5,6 +5,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.Events;
 using System.Linq;
+using Lean.Pool;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
@@ -43,6 +44,7 @@ public class CardManager : MonoBehaviour
     Pion pion;
 
     
+
     public void ClickCard(Card card)
     {
         if (indexNumber < 0)
@@ -646,6 +648,7 @@ public class CardManager : MonoBehaviour
         }
         spawnedCards.Clear();
 
+        Debug.Log("spawn player card");
         foreach(int i in pion.cards)
         {
             Card c = Instantiate(cardPrefab, cardContainer).GetComponent<Card>();

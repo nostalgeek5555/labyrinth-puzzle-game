@@ -71,7 +71,11 @@ public class Pion : MonoBehaviour
 
     public IEnumerator Turn()
     {
-        if(gotPunishment)
+        StopCoroutine(Dadu.instance.Shuffle());
+        GameManager.Instance.ClearCards();
+        Debug.Log("player get turn");
+
+        if (gotPunishment)
         {
             UIManager.Instance.playerCardsInfo.gameObject.SetActive(false);
 
@@ -81,11 +85,18 @@ public class Pion : MonoBehaviour
 
         else
         {
+            UIManager.Instance.playerCardsInfo.gameObject.SetActive(true);
             UIManager.Instance.UpdatePlayerCardInfoUI(type, playerName, playerId);
+
+            if (!isAi)
+            {
+                GameManager.Instance.SpawnCard(playerId);
+            }
         }
 
         isMoving = true;
         currentTile.SetBlueSprite();
+        Debug.Log($"player is ai or not :: {isAi}");
         yield return StartCoroutine(Dadu.instance.Shuffle(!isAi));
         paths = GameManager.Instance.GetTiles(currentTile, Dadu.instance.dice);
         if (paths.Count > 0)

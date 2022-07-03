@@ -197,6 +197,8 @@ public class UIManager : MonoBehaviour
         Debug.Log("despawn done");
     }
 
+    
+
     public void SpawnInfoUITemplate()
     {
         if (GameManager.Instance != null)
@@ -250,16 +252,33 @@ public class UIManager : MonoBehaviour
     {
         playerCardsInfo.gameObject.SetActive(true);
 
-        if (name != "")
+        if (type == Pion.Type.PLAYER)
         {
-            playerCardsTMP.text = name + " Cards";
-        }
+            if (name != "")
+            {
+                playerCardsTMP.text = name + " Cards";
+            }
 
+            else
+            {
+                playerCardsTMP.text = type.ToString() + " " + id.ToString() + " Cards";
+            }
+        }
+        
         else
         {
-            playerCardsTMP.text = type.ToString() + " " + id.ToString() + " Cards";
+            if (name != "")
+            {
+                playerCardsTMP.text = name + " Cards";
+            }
+
+            else
+            {
+                playerCardsTMP.text = type.ToString() + " " + id.ToString() + " Turn";
+            }
         }
     }
+
 
     public enum State
     {
