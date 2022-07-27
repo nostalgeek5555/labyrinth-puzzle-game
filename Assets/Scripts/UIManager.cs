@@ -145,6 +145,9 @@ public class UIManager : MonoBehaviour
             case State.QUIT:
                 HandleOnQuit();
                 break;
+            case State.SHOW_FINISH:
+                ShowFinishLine();
+                break;
             default:
                 break;
         }
@@ -181,6 +184,11 @@ public class UIManager : MonoBehaviour
         DespawnExistingTemplateOnInit();
 
         SpawnInfoUITemplate();
+    }
+
+    private void ShowFinishLine()
+    {
+        GameManager.Instance.ShowFinishUI();
     }
 
     public IEnumerator DespawnExistingTemplateOnInit()
@@ -290,6 +298,7 @@ public class UIManager : MonoBehaviour
         WIN = 5,
         LOSE = 6,
         RESTART = 7,
-        QUIT = 8
+        QUIT = 8,
+        SHOW_FINISH = 9
     }
 }

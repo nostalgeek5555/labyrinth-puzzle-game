@@ -604,14 +604,16 @@ public class CardManager : MonoBehaviour
 
     public void WrongAnswer()
     {
-        wrongText.text = pion.playerName + " tidak mendapatkan Kesempatan melempar Dadu satu kali";
+        wrongText.text = //pion.playerName + " tidak mendapatkan Kesempatan melempar Dadu satu kali";
+            "Wrong answer! Your next turn will be skipped";
         pion.gotPunishment = true;
         Debug.Log($"got punishment is {pion.gotPunishment} because of wrong answer");
     }
 
     public void SkipQuestion()
     {
-        skipText.text = pion.playerName + " aman, kesempatan melempar dadu berikutnya tidak hilang";
+        skipText.text = //pion.playerName + " aman, kesempatan melempar dadu berikutnya tidak hilang";
+            "You still had the chance to roll the dice next turn";
         pion.gotPunishment = false;
         Debug.Log($"{pion.gotPunishment} because of skipping question");
     }

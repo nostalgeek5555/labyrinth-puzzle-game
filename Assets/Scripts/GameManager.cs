@@ -106,6 +106,7 @@ public class GameManager : MonoBehaviour
     public void PlayGame()
     {
         isStarted = true;
+        HideFinishUI();
         StopAllCoroutines();
         StartCoroutine(PlayingGame());
         if (countDown != null)
@@ -267,7 +268,51 @@ public class GameManager : MonoBehaviour
         int minute = timer / 60;
         int second = timer - (minute * 60);
         timerText[Map].text = minute.ToString().PadLeft(2, '0') + ":" + second.ToString().PadLeft(2, '0');
+
+        if (timer <= 5)
+        {
+            ShowFinishLine();
+        }
     }
+
+    void ShowFinishLine()
+    {
+        if (UIManager.Instance.state != UIManager.State.SHOW_FINISH)
+        {
+            UIManager.Instance.StateController(UIManager.State.SHOW_FINISH);
+        }
+    }
+
+    public void ShowFinishUI()
+    {
+        foreach (var _tile in tiles[Map].tiles)
+        {
+            Tile tile = _tile.GetComponent<Tile>();
+            if (tile.isLateFinishTile)
+            {
+                CanvasGroup cg = tile.GetComponent<CanvasGroup>();
+                cg.alpha = 0f;
+                tile.isFinishTile = true;
+                tile.isLateFinishTile = false;
+            }
+        }
+    }
+
+    public void HideFinishUI()
+    {
+        foreach (var _tile in tiles[Map].tiles)
+        {
+            Tile tile = _tile.GetComponent<Tile>();
+            if (tile.isFinishTile)
+            {
+                CanvasGroup cg = tile.GetComponent<CanvasGroup>();
+                cg.alpha = 0f;
+                tile.isFinishTile = false;
+                tile.isLateFinishTile = true;
+            }
+        }
+    }
+
 
     public void ActivateMap()
     {

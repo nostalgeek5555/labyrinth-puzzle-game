@@ -12,6 +12,7 @@ public class Tile : MonoBehaviour
     public Sprite blueSprite, greenSprite;
     public GameObject rightWall, bottomWall, leftWall, topWall;
     public bool isFinishTile;
+    public bool isLateFinishTile;
     public bool isStartTile;
    // [HideInInspector]
     public bool rightStat, bottomStat, leftStat, topStat;
